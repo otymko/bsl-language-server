@@ -21,11 +21,15 @@
  */
 package com.github._1c_syntax.bsl.languageserver.context.symbol;
 
+import com.github._1c_syntax.bsl.parser.BSLCommentParser;
+import com.github._1c_syntax.bsl.parser.CommentTokenizer;
 import lombok.Getter;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.requireNonNull;
 
 public class MethodDescription {
 
@@ -34,6 +38,8 @@ public class MethodDescription {
   private final int endLine;
   @Getter
   private final String description;
+  private CommentTokenizer tokenizer;
+
 
   public MethodDescription(List<Token> comments) {
     description = comments.stream()
@@ -49,6 +55,8 @@ public class MethodDescription {
 
     this.startLine = comments.get(0).getLine();
     this.endLine = comments.get(comments.size() - 1).getLine();
+    this.tokenizer = new CommentTokenizer(description);
+
   }
 
   public boolean isEmpty() {
@@ -59,6 +67,11 @@ public class MethodDescription {
     int firstLine = first.getLine();
     int lastLine = last.getLine();
     return (firstLine >= startLine && lastLine <= endLine);
+  }
+
+  public BSLCommentParser.DocContext getAst() {
+    requireNonNull(description);
+    return tokenizer.getAst();
   }
 
   private static String uncomment(String text) {

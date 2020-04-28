@@ -77,7 +77,7 @@ dependencies {
 
     implementation("org.reflections", "reflections", "0.9.10")
 
-    implementation("com.github.1c-syntax", "bsl-parser", "01cc1512e10b667a0ec3fdd2307ca0221bf52684") {
+    implementation("com.github.1c-syntax", "bsl-parser", "f2675e4e23874508b0b4363a353c9554e4365f76") {
         exclude("com.tunnelvisionlabs", "antlr4-annotations")
         exclude("com.ibm.icu", "*")
         exclude("org.antlr", "ST4")
@@ -246,7 +246,7 @@ publishing {
 //            artifact(tasks.javadoc.get())
             pom.withXml {
                 val dependenciesNode = asNode().appendNode("dependencies")
-                
+
                 configurations.implementation.get().dependencies.forEach { dependency ->
                     if (dependency !is SelfResolvingDependency) {
                         val dependencyNode = dependenciesNode.appendNode("dependency")
