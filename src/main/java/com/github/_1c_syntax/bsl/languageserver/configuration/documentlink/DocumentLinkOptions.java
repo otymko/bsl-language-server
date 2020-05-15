@@ -19,22 +19,29 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with BSL Language Server.
  */
-package com.github._1c_syntax.bsl.languageserver.configuration.codelens;
+package com.github._1c_syntax.bsl.languageserver.configuration.documentlink;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Корневой класс для настройки {@link com.github._1c_syntax.bsl.languageserver.providers.CodeLensProvider}
+ * Корневой класс для настройки {@link com.github._1c_syntax.bsl.languageserver.providers.DocumentLinkProvider}
  */
 @Data
 @AllArgsConstructor(onConstructor = @__({@JsonCreator(mode = JsonCreator.Mode.DISABLED)}))
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CodeLensOptions {
-  private boolean showCognitiveComplexity = true;
-  private boolean showCyclomaticComplexity = true;
+public class DocumentLinkOptions {
+  @Getter(AccessLevel.NONE)
+  private boolean useDevSite;
+  private String siteRoot = "https://1c-syntax.github.io/bsl-language-server";
+
+  public boolean useDevSite() {
+    return useDevSite;
+  }
 }
