@@ -9,7 +9,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-               os: [windows-latest, ubuntu-latest, macOS-latest]
+               os: [ubuntu-latest]
                include:
                     - os: windows-latest
                       displayName: Windows
@@ -64,65 +64,7 @@ jobs:
                     zip.close()
               shell: python
             - name: Build jpackage app-image
-              run: |
-                    import os
-                    import platform
-                    import re
-                    import ntpath
-                    import shutil
-
-                    pattern = r"bsl.+\.jar"
-                    thisPlatform = platform.system();
-                    isWindows = False
-                    if thisPlatform == 'Windows':
-                        isWindows = True
-                        
-                    if isWindows:
-                        jpackage = os.getcwd() + "\\" + "${{ matrix.jdk14Path }}" + '\\bin\\jpackage.exe'
-                        dirName = os.getcwd() + "\\build\\libs"
-                    else:
-                        jpackage = os.getcwd() + "${{ matrix.jdk14Path }}" + '/bin/jpackage'
-                        dirName = os.getcwd() + "/build/libs"    
-
-                    def start():
-                        fullname = get_bslls_jar(dirName)
-                        if (fullname == None):
-                            exit
-                        
-                        cmdArgs = [jpackage]
-                        cmdArgs.append('--name')
-                        cmdArgs.append('bsl-language-server')
-                        cmdArgs.append('--input')
-                        cmdArgs.append('build/libs')
-                        cmdArgs.append('--main-jar')
-                        cmdArgs.append(fullname)
-                        if isWindows:
-                            cmdArgs.append('--win-console')
-                        cmdArgs.append('--type')
-                        cmdArgs.append('app-image')
-                        cmdArgs.append('--java-options')
-                        cmdArgs.append('-Xmx2g')
-
-                        cmd = ' '.join(cmdArgs) 
-                        os.system(cmd)
-                          
-                        shutil.make_archive("bsl-language-server_" + "${{ matrix.prefix }}", 'zip', './',"${{ matrix.app-image }}")
-
-                    def get_bslls_jar(dir):
-                        names = os.listdir(dir)
-                        for name in names:
-                            fullname = os.path.join(dir, name)
-                            if os.path.isfile(fullname) and re.search(pattern, fullname) and fullname.find('exec.jar') != -1:
-                                return ntpath.basename(fullname)
-                        return None
-
-                    def run_jpackage():
-                        cmd = jpackage + ' @jpackage.cfg'
-                        print(cmd)
-                        os.system(cmd)
-
-                    start()
-              shell: python
+              run: python .github/scripts/make_image.py "${{ matrix.jdk14Path }}" "${{ matrix.prefix }}" "${{ matrix.app-image }}"
             - name: Upload artifact
               uses: actions/upload-artifact@master
               with:
